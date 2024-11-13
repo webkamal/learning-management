@@ -54,10 +54,10 @@ input[type="color"] {
     --primary: theme("colors.primary.700");
     --primary-foreground: theme("colors.white.50");
 
-    --muted: theme("colors.customgreys.darkerGrey");
+    --muted: theme("colors.primary.600");
     --muted-foreground: theme("colors.customgreys.dirtyGrey");
 
-    --accent: theme("colors.customgreys.darkerGrey");
+    --accent: theme("colors.primary.600");
     --accent-foreground: theme("colors.white.50");
 
     --border: theme("colors.customgreys.secondarybg");
@@ -65,10 +65,6 @@ input[type="color"] {
 
     --card: theme("colors.customgreys.primarybg");
     --card-foreground: theme("colors.white.50");
-
-    --accent: theme("colors.customgreys.darkerGrey");
-    --accent-foreground: theme("colors.white.50");
-    --accent-hover: theme("colors.customgreys.secondarybg");
   }
 
   .dark {
@@ -89,10 +85,10 @@ input[type="color"] {
     --primary: theme("colors.primary.700");
     --primary-foreground: theme("colors.white.50");
 
-    --muted: theme("colors.customgreys.darkerGrey");
+    --muted: theme("colors.primary.600");
     --muted-foreground: theme("colors.customgreys.dirtyGrey");
 
-    --accent: theme("colors.customgreys.darkerGrey");
+    --accent: theme("colors.primary.600");
     --accent-foreground: theme("colors.white.50");
 
     --border: theme("colors.customgreys.secondarybg");
@@ -100,10 +96,6 @@ input[type="color"] {
 
     --card: theme("colors.customgreys.primarybg");
     --card-foreground: theme("colors.white.50");
-
-    --accent: theme("colors.customgreys.darkerGrey");
-    --accent-foreground: theme("colors.white.50");
-    --accent-hover: theme("colors.customgreys.secondarybg");
   }
 }
 
@@ -698,20 +690,17 @@ input[type="color"] {
 }
 
 .course__instructor-title {
-  @apply text-sm text-muted-foreground;
+  @apply text-sm;
 }
 
 .course__instructor-bio {
-  @apply text-muted-foreground text-sm;
+  @apply text-sm;
 }
 
 /* Chapters Sidebar */
 .chapters-sidebar {
   @apply bg-customgreys-secondarybg border-x border-gray-700 overflow-y-auto transition-all duration-500 ease-in-out animate-in fade-in slide-in-from-left flex-shrink-0;
   height: 100vh;
-}
-
-.chapters-sidebar__header {
 }
 
 .chapters-sidebar__title {
@@ -955,7 +944,7 @@ input[type="color"] {
 }
 
 .teacher-courses__grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-7 mt-6 w-full;
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 mt-6 w-full;
 }
 
 /* Accordion Sections */
@@ -1026,7 +1015,7 @@ input[type="color"] {
 }
 
 .course-card-search__image-container {
-  @apply relative w-full pt-[56.25%];
+  @apply relative w-auto pt-[56.25%];
 }
 
 .course-card-search__image {
@@ -1039,7 +1028,7 @@ input[type="color"] {
 }
 
 .course-card-teacher__header {
-  @apply p-0 h-[50%] w-[100%] overflow-hidden;
+  @apply p-0 h-[400px] overflow-hidden;
 }
 
 .course-card-teacher__image {
@@ -1407,7 +1396,7 @@ input[type="color"] {
 }
 
 .app-sidebar__logo {
-  @apply transition duration-200 group-data-[collapsible=icon]:group-hover:brightness-75;
+  @apply transition duration-200 group-data-[collapsible=icon]:group-hover:brightness-75 w-auto;
 }
 
 .app-sidebar__title {
@@ -1471,17 +1460,17 @@ input[type="color"] {
 
 /* Add this class for group hover effect */
 .group .course-card__image {
-  @apply hover:scale-105;
+  @apply hover:scale-105 w-auto;
 }
 
 /* Add this class for group hover effect */
 .group .course-card-search__image {
-  @apply hover:scale-105;
+  @apply hover:scale-105 w-auto;
 }
 
 /* Add this class for group hover effect */
 .group .course-card-teacher__image {
-  @apply hover:scale-105;
+  @apply hover:scale-105 w-auto;
 }
 
 /* Add these classes for group hover effects */

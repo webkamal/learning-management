@@ -6,7 +6,7 @@ import {
   getCourse,
   listCourses,
   updateCourse,
-  uploadVideo,
+  getUploadVideoUrl,
 } from "../controllers/courseController";
 import { requireAuth } from "@clerk/express";
 
@@ -21,10 +21,9 @@ router.put("/:courseId", requireAuth(), upload.single("image"), updateCourse);
 router.delete("/:courseId", requireAuth(), deleteCourse);
 
 router.post(
-  "/:courseId/sections/:sectionId/chapters/:chapterId/upload-video",
+  "/:courseId/sections/:sectionId/chapters/:chapterId/get-upload-url",
   requireAuth(),
-  upload.array("video"),
-  uploadVideo
+  getUploadVideoUrl
 );
 
 export default router;

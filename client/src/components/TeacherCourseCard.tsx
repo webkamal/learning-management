@@ -20,15 +20,14 @@ const TeacherCourseCard = ({
   return (
     <Card className="course-card-teacher group">
       <CardHeader className="course-card-teacher__header">
-        {course.image && (
-          <Image
-            src={course.image}
-            alt={course.title}
-            width={370}
-            height={200}
-            className="course-card-teacher__image"
-          />
-        )}
+        <Image
+          src={course.image || "/placeholder.png"}
+          alt={course.title}
+          width={370}
+          height={150}
+          className="course-card-teacher__image"
+          priority
+        />
       </CardHeader>
 
       <CardContent className="course-card-teacher__content">
@@ -64,27 +63,25 @@ const TeacherCourseCard = ({
           )}
         </div>
 
-        <div className="w-full flex gap-2 mt-3">
+        <div className="w-full xl:flex space-y-2 xl:space-y-0 gap-2 mt-3">
           {isOwner ? (
             <>
               <div>
                 <Button
-                  variant="outline"
                   className="course-card-teacher__edit-button"
                   onClick={() => onEdit(course)}
                 >
                   <Pencil className="w-4 h-4 mr-2" />
-                  Edit Course
+                  Edit
                 </Button>
               </div>
               <div>
                 <Button
-                  variant="destructive"
                   className="course-card-teacher__delete-button"
                   onClick={() => onDelete(course)}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Course
+                  Delete
                 </Button>
               </div>
             </>

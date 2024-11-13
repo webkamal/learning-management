@@ -129,15 +129,22 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
           </div>
         );
       case "file":
+        const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/ogg"];
+        const acceptedFileTypes = accept ? [accept] : ACCEPTED_VIDEO_TYPES;
+
         return (
           <FilePond
             className={`${inputClassName}`}
-            files={field.value}
+            files={field.value ? [field.value] : []}
             allowMultiple={multiple}
-            onupdatefiles={(fileItems: any) => {
-              field.onChange(fileItems.map((fileItem: any) => fileItem.file));
+            onupdatefiles={(fileItems) => {
+              field.onChange(
+                multiple
+                  ? fileItems.map((fileItem) => fileItem.file)
+                  : fileItems[0]?.file
+              );
             }}
-            acceptedFileTypes={accept ? [accept] : undefined}
+            acceptedFileTypes={acceptedFileTypes}
             labelIdle={`Drag & Drop your files or <span class="filepond--label-action">Browse</span>`}
             credits={false}
           />

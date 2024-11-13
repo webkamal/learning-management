@@ -14,7 +14,7 @@ import { openSectionModal, setSections } from "@/state";
 import {
   useGetCourseQuery,
   useUpdateCourseMutation,
-  useUploadVideoMutation,
+  useGetUploadVideoUrlMutation,
 } from "@/state/api";
 import { useAppDispatch, useAppSelector } from "@/state/redux";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +32,7 @@ const CourseEditor = () => {
   const id = params.id as string;
   const { data: course, isLoading, refetch } = useGetCourseQuery(id);
   const [updateCourse] = useUpdateCourseMutation();
-  const [uploadVideo] = useUploadVideoMutation();
+  const [getUploadVideoUrl] = useGetUploadVideoUrlMutation();
 
   const dispatch = useAppDispatch();
   const { sections } = useAppSelector((state) => state.global.courseEditor);
@@ -63,14 +63,18 @@ const CourseEditor = () => {
 
   const onSubmit = async (data: CourseFormData) => {
     try {
-      const formData = createCourseFormData(data, sections);
+      const updatedSections = await uploadAllVideos(
+        sections,
+        id,
+        getUploadVideoUrl
+      );
 
-      const updatedCourse = await updateCourse({
+      const formData = createCourseFormData(data, updatedSections);
+
+      await updateCourse({
         courseId: id,
         formData,
       }).unwrap();
-
-      await uploadAllVideos(sections, updatedCourse.sections, id, uploadVideo);
 
       refetch();
     } catch (error) {
@@ -83,7 +87,7 @@ const CourseEditor = () => {
       <div className="flex items-center gap-5 mb-5">
         <button
           className="flex items-center border border-customgreys-dirtyGrey rounded-lg p-2 gap-2 cursor-pointer hover:bg-customgreys-dirtyGrey hover:text-white-100 text-customgreys-dirtyGrey"
-          onClick={() => router.push("/teacher/courses")}
+          onClick={() => router.push("/teacher/courses", { scroll: false })}
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Courses</span>

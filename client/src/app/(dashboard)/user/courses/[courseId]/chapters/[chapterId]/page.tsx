@@ -21,6 +21,7 @@ const Course = () => {
     hasMarkedComplete,
     setHasMarkedComplete,
   } = useCourseProgressData();
+  console.log("currentChapter.video:", currentChapter);
 
   const playerRef = useRef<ReactPlayer>(null);
 
@@ -60,10 +61,7 @@ const Course = () => {
           <div className="course__header">
             <div className="course__instructor">
               <Avatar className="course__avatar">
-                <AvatarImage
-                  src="/instructor_avatar.png"
-                  alt={course.teacherName}
-                />
+                <AvatarImage alt={course.teacherName} />
                 <AvatarFallback className="course__avatar-fallback">
                   {course.teacherName[0]}
                 </AvatarFallback>
@@ -153,10 +151,7 @@ const Course = () => {
             <CardContent className="course__instructor-info">
               <div className="course__instructor-header">
                 <Avatar className="course__instructor-avatar">
-                  <AvatarImage
-                    src="/instructor-avatar-placeholder.png"
-                    alt={course.teacherName}
-                  />
+                  <AvatarImage alt={course.teacherName} />
                   <AvatarFallback className="course__instructor-avatar-fallback">
                     {course.teacherName[0]}
                   </AvatarFallback>

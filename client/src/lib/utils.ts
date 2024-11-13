@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import * as z from "zod";
+import { api } from "../state/api";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -286,7 +288,6 @@ export const customDataGridStyles = {
   },
 };
 
-
 export const createCourseFormData = (
   data: CourseFormData,
   sections: Section[]
@@ -298,57 +299,90 @@ export const createCourseFormData = (
   formData.append("price", data.coursePrice.toString());
   formData.append("status", data.courseStatus ? "Published" : "Draft");
 
-  const sectionsWithoutVideos = sections.map((section) => ({
+  const sectionsWithVideos = sections.map((section) => ({
     ...section,
     chapters: section.chapters.map((chapter) => ({
       ...chapter,
-      video: typeof chapter.video === "string" ? chapter.video : undefined,
+      video: chapter.video,
     })),
   }));
 
-  formData.append("sections", JSON.stringify(sectionsWithoutVideos));
+  formData.append("sections", JSON.stringify(sectionsWithVideos));
 
   return formData;
 };
 
 export const uploadAllVideos = async (
   localSections: Section[],
-  updatedSections: Section[],
   courseId: string,
-  uploadVideo: any
+  getUploadVideoUrl: any
 ) => {
-  // Create a map of updated sections for easy lookup
-  const updatedSectionsMap = new Map<string, Section>();
-  updatedSections.forEach((section) => {
-    updatedSectionsMap.set(section.sectionId, section);
-  });
+  const updatedSections = localSections.map((section) => ({
+    ...section,
+    chapters: section.chapters.map((chapter) => ({
+      ...chapter,
+    })),
+  }));
 
-  for (const localSection of localSections) {
-    const updatedSection = updatedSectionsMap.get(localSection.sectionId);
-    if (!updatedSection) continue;
-
-    // Create a map of updated chapters for easy lookup
-    const updatedChaptersMap = new Map<string, Chapter>();
-    updatedSection.chapters.forEach((chapter) => {
-      updatedChaptersMap.set(chapter.chapterId, chapter);
-    });
-
-    for (const localChapter of localSection.chapters) {
-      const updatedChapter = updatedChaptersMap.get(localChapter.chapterId);
-      if (!updatedChapter) continue;
-
-      if (localChapter.video instanceof File) {
-        const videoFormData = new FormData();
-        videoFormData.append("video", localChapter.video);
-
-        // Upload the video and wait for it to finish before proceeding
-        await uploadVideo({
-          courseId,
-          sectionId: updatedSection.sectionId,
-          chapterId: updatedChapter.chapterId,
-          formData: videoFormData,
-        }).unwrap();
+  for (let i = 0; i < updatedSections.length; i++) {
+    for (let j = 0; j < updatedSections[i].chapters.length; j++) {
+      const chapter = updatedSections[i].chapters[j];
+      if (chapter.video instanceof File && chapter.video.type === "video/mp4") {
+        try {
+          const updatedChapter = await uploadVideo(
+            chapter,
+            courseId,
+            updatedSections[i].sectionId,
+            getUploadVideoUrl
+          );
+          updatedSections[i].chapters[j] = updatedChapter;
+        } catch (error) {
+          console.error(
+            `Failed to upload video for chapter ${chapter.chapterId}:`,
+            error
+          );
+        }
       }
     }
   }
+
+  return updatedSections;
 };
+
+async function uploadVideo(
+  chapter: Chapter,
+  courseId: string,
+  sectionId: string,
+  getUploadVideoUrl: any
+) {
+  const file = chapter.video as File;
+
+  try {
+    const { uploadUrl, videoUrl } = await getUploadVideoUrl({
+      courseId,
+      sectionId,
+      chapterId: chapter.chapterId,
+      fileName: file.name,
+      fileType: file.type,
+    }).unwrap();
+
+    await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+      },
+      body: file,
+    });
+    toast.success(
+      `Video uploaded successfully for chapter ${chapter.chapterId}`
+    );
+
+    return { ...chapter, video: videoUrl };
+  } catch (error) {
+    console.error(
+      `Failed to upload video for chapter ${chapter.chapterId}:`,
+      error
+    );
+    throw error;
+  }
+}

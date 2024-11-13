@@ -3,11 +3,6 @@ import Course from "../models/courseModel";
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { getAuth } from "@clerk/express";
-import {
-  getContentType,
-  updateCourseVideoInfo,
-  validateUploadedFiles,
-} from "../utils/utils";
 
 const s3 = new AWS.S3();
 
@@ -158,49 +153,42 @@ export const deleteCourse = async (
 
     await Course.delete(courseId);
 
-    res.json({ message: "Course deleted successfully" });
+    res.json({ message: "Course deleted successfully", data: course });
   } catch (error) {
     res.status(500).json({ message: "Error deleting course", error });
   }
 };
 
-export const uploadVideo = async (
+export const getUploadVideoUrl = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { courseId, sectionId, chapterId } = req.params;
-  const files = req.files as Express.Multer.File[];
+  const { fileName, fileType } = req.body;
 
-  if (!files || files.length === 0) {
-    res.status(400).json({ message: "No files uploaded" });
+  if (!fileName || !fileType) {
+    res.status(400).json({ message: "File name and type are required" });
     return;
   }
 
   try {
-    validateUploadedFiles(files);
-
-    const course = await Course.get(courseId);
-
     const uniqueId = uuidv4();
-    const file = files[0];
-    const s3Key = `videos/${uniqueId}/${file.originalname}`;
+    const s3Key = `videos/${uniqueId}/${fileName}`;
 
-    await s3
-      .upload({
-        Bucket: process.env.S3_BUCKET_NAME || "",
-        Key: s3Key,
-        Body: file.buffer,
-        ContentType: getContentType(file.originalname),
-      })
-      .promise();
+    const s3Params = {
+      Bucket: process.env.S3_BUCKET_NAME || "",
+      Key: s3Key,
+      Expires: 60,
+      ContentType: fileType,
+    };
 
-    const videoUrl = `${process.env.CLOUDFRONT_DOMAIN}/videos/${uniqueId}/${file.originalname}`;
+    const uploadUrl = s3.getSignedUrl("putObject", s3Params);
+    const videoUrl = `${process.env.CLOUDFRONT_DOMAIN}/videos/${uniqueId}/${fileName}`;
 
-    updateCourseVideoInfo(course, sectionId, chapterId, videoUrl);
-    await course.save();
-
-    res.json({ message: "Video uploaded successfully", data: { videoUrl } });
+    res.json({
+      message: "Upload URL generated successfully",
+      data: { uploadUrl, videoUrl },
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error uploading video", error });
+    res.status(500).json({ message: "Error generating upload URL", error });
   }
 };

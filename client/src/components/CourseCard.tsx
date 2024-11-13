@@ -13,15 +13,14 @@ const CourseCard = ({ course, onGoToCourse }: CourseCardProps) => {
   return (
     <Card className="course-card group" onClick={() => onGoToCourse(course)}>
       <CardHeader className="course-card__header">
-        {course.image && (
-          <Image
-            src={course.image}
-            alt={course.title}
-            width={400}
-            height={350}
-            className="course-card__image"
-          />
-        )}
+        <Image
+          src={course.image || "/placeholder.png"}
+          alt={course.title}
+          width={400}
+          height={350}
+          className="course-card__image"
+          priority
+        />
       </CardHeader>
       <CardContent className="course-card__content">
         <CardTitle className="course-card__title">
@@ -30,10 +29,7 @@ const CourseCard = ({ course, onGoToCourse }: CourseCardProps) => {
 
         <div className="flex items-center gap-2">
           <Avatar className="w-6 h-6">
-            <AvatarImage
-              src="/instructor_avatar.png"
-              alt={course.teacherName}
-            />
+            <AvatarImage alt={course.teacherName} />
             <AvatarFallback className="bg-secondary-700 text-black">
               {course.teacherName[0]}
             </AvatarFallback>

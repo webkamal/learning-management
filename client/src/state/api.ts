@@ -129,19 +129,20 @@ export const api = createApi({
       invalidatesTags: ["Courses"],
     }),
 
-    uploadVideo: build.mutation<
-      { message: string; videoUrl: string },
+    getUploadVideoUrl: build.mutation<
+      { uploadUrl: string; videoUrl: string },
       {
         courseId: string;
         chapterId: string;
         sectionId: string;
-        formData: FormData;
+        fileName: string;
+        fileType: string;
       }
     >({
-      query: ({ courseId, sectionId, chapterId, formData }) => ({
-        url: `courses/${courseId}/sections/${sectionId}/chapters/${chapterId}/upload-video`,
+      query: ({ courseId, sectionId, chapterId, fileName, fileType }) => ({
+        url: `courses/${courseId}/sections/${sectionId}/chapters/${chapterId}/get-upload-url`,
         method: "POST",
-        body: formData,
+        body: { fileName, fileType },
       }),
     }),
 
@@ -239,7 +240,7 @@ export const {
   useDeleteCourseMutation,
   useGetCoursesQuery,
   useGetCourseQuery,
-  useUploadVideoMutation,
+  useGetUploadVideoUrlMutation,
   useGetTransactionsQuery,
   useCreateTransactionMutation,
   useCreateStripePaymentIntentMutation,
