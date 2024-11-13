@@ -5,9 +5,17 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { courseSchema } from "@/lib/schemas";
-import { centsToDollars, createCourseFormData } from "@/lib/utils";
+import {
+  centsToDollars,
+  createCourseFormData,
+  uploadAllVideos,
+} from "@/lib/utils";
 import { openSectionModal, setSections } from "@/state";
-import { useGetCourseQuery, useUpdateCourseMutation } from "@/state/api";
+import {
+  useGetCourseQuery,
+  useUpdateCourseMutation,
+  useUploadVideoMutation,
+} from "@/state/api";
 import { useAppDispatch, useAppSelector } from "@/state/redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Plus } from "lucide-react";
@@ -24,7 +32,7 @@ const CourseEditor = () => {
   const id = params.id as string;
   const { data: course, isLoading, refetch } = useGetCourseQuery(id);
   const [updateCourse] = useUpdateCourseMutation();
-  // upload video functionality
+  const [uploadVideo] = useUploadVideoMutation();
 
   const dispatch = useAppDispatch();
   const { sections } = useAppSelector((state) => state.global.courseEditor);
@@ -62,7 +70,7 @@ const CourseEditor = () => {
         formData,
       }).unwrap();
 
-      // await uploadAllVideos(sections, updatedCourse.sections, id, uploadVideo);
+      await uploadAllVideos(sections, updatedCourse.sections, id, uploadVideo);
 
       refetch();
     } catch (error) {
