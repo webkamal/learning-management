@@ -31,7 +31,11 @@ const PaymentPageContent = () => {
       return;
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : undefined);
     console.log("baseUrl:", baseUrl);
     console.log("return url:", `${baseUrl}/checkout?step=3&id=${courseId}`);
 
