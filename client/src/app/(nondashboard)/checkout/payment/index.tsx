@@ -32,6 +32,8 @@ const PaymentPageContent = () => {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL;
+    console.log("baseUrl:", baseUrl);
+    console.log("return url:", `${baseUrl}/checkout?step=3&id=${courseId}`);
 
     const result = await stripe.confirmPayment({
       elements,
