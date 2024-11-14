@@ -39,13 +39,13 @@ const PaymentPageContent = () => {
     // console.log("baseUrl:", baseUrl);
     // console.log("return url:", `${baseUrl}/checkout?step=3&id=${courseId}`);
 
-    const baseUrl = `https://${process.env.VERCEL_URL}`;
+    const baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
     console.log("baseUrl:", baseUrl);
-    console.log("process.env.VERCEL_URL:", process.env.VERCEL_URL);
+    console.log("process.env.VERCEL_URL:", process.env.NEXT_PUBLIC_VERCEL_URL);
     console.log(
       "VERCEL_PROJECT_PRODUCTION_URL:",
-      process.env.VERCEL_PROJECT_PRODUCTION_URL
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
     );
 
     const result = await stripe.confirmPayment({
