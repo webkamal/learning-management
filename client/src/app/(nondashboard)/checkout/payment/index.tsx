@@ -31,22 +31,11 @@ const PaymentPageContent = () => {
       return;
     }
 
-    // const baseUrl =
-    //   process.env.NEXT_PUBLIC_BASE_URL ||
-    //   (process.env.VERCEL_URL
-    //     ? `https://${process.env.VERCEL_URL}`
-    //     : undefined);
-    // console.log("baseUrl:", baseUrl);
-    // console.log("return url:", `${baseUrl}/checkout?step=3&id=${courseId}`);
-
-    const baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-
-    console.log("baseUrl:", baseUrl);
-    console.log("process.env.VERCEL_URL:", process.env.NEXT_PUBLIC_VERCEL_URL);
-    console.log(
-      "VERCEL_PROJECT_PRODUCTION_URL:",
-      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
-    );
+    const baseUrl = process.env.NEXT_PUBLIC_LOCAL_URL
+      ? `http://${process.env.NEXT_PUBLIC_LOCAL_URL}`
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : undefined;
 
     const result = await stripe.confirmPayment({
       elements,
